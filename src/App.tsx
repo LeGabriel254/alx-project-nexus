@@ -5,8 +5,6 @@ import { Navbar } from './components/Navbar'
 
 
 function App() {
-
-
   return (
     <div className="min-h-screen bg-black text-gray-100 transition-opacity duration-700 pt-20">
      <Navbar />
