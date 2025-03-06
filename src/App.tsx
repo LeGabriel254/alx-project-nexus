@@ -13,6 +13,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />}/>
           <Route path="/create" element={<CreatPostPage />}/>
+          <Route path="/post:id" element={<CreatPostPage />}/>
         </Routes>
       </div>
     </div>
