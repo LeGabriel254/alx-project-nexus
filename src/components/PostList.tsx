@@ -14,10 +14,7 @@ export interface Post {
 }
 
 const fetchPosts = async (): Promise<Post[]> => {
-  const { data, error } = await supabase
-    .from("posts")
-    .select("*")
-    .order("created_at", { ascending: false });
+  const { data, error } = await supabase.rpc("get_posts_with_counts");
 
   if (error) throw new Error(error.message);
 
@@ -31,19 +28,19 @@ export const PostList = () => {
   });
 
   if (isLoading) {
-    return <div>Loading posts...</div>;
+    return <div> Loading posts...</div>;
   }
 
   if (error) {
-    return <div>Error: {error.message}</div>;
+    return <div> Error: {error.message}</div>;
   }
 
   console.log(data);
 
   return (
     <div className="flex flex-wrap gap-6 justify-center">
-      {data?.map((post) => (
-        <PostItem post={post} key={post.id} />
+      {data?.map((post, key) => (
+        <PostItem post={post} key={key} />
       ))}
     </div>
   );
