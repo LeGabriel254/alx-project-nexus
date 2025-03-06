@@ -27,5 +27,5 @@ A modern social media platform that allows users to create posts, form communiti
 
 ### 1️⃣ Clone the Repository  
 ```sh
-git clone <`https://github.com/LeGabriel254/alx-project-nexus.git`>
-cd <alx-project-nexus>
+git clone https://github.com/LeGabriel254/alx-project-nexus.git
+cd alx-project-nexus
