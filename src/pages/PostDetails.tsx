@@ -1,11 +1,9 @@
+import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { Post } from "../components/PostList";
 import { supabase } from "../supabase-client";
 import { LikeButton } from "../components/LikeButton";
-
-interface Props {
-  postId: number;
-}
+import { CommentSection } from "../components/CommentSection";
 
 const fetchPostById = async (id: number): Promise<Post> => {
   const { data, error } = await supabase
@@ -19,24 +17,26 @@ const fetchPostById = async (id: number): Promise<Post> => {
   return data as Post;
 };
 
-export const PostDetails = ({ postId }: Props) => {
+export const PostDetails = () => {
+  const { postId } = useParams(); 
+  const numericPostId = Number(postId); 
+
   const { data, error, isLoading } = useQuery<Post, Error>({
-    queryKey: ["post", postId],
-    queryFn: () => fetchPostById(postId),
+    queryKey: ["post", numericPostId],
+    queryFn: () => fetchPostById(numericPostId),
+    enabled: !isNaN(numericPostId), 
   });
 
   if (isLoading) {
-    return <div>Loading posts...</div>;
+    return <div>Loading post...</div>;
   }
 
   if (error) {
     return <div>Error: {error.message}</div>;
   }
 
-  // Debugging: Check what `created_at` is
   console.log("Post Data:", data);
 
-  // Ensure created_at is a valid date
   const formattedDate = data?.created_at
     ? new Date(String(data.created_at)).toLocaleDateString()
     : "No date available";
@@ -50,13 +50,14 @@ export const PostDetails = ({ postId }: Props) => {
         <img
           src={data.image_url}
           alt={data?.title}
-          className="mt-4 rounded object-cover w-full h-64"
+          className="mt-4 rounded object-contain w- h-64"
         />
       )}
       <p className="text-gray-400">{data?.content}</p>
       <p className="text-gray-500 text-sm">Posted on: {formattedDate}</p>
 
-      <LikeButton postId={postId} />
+      <LikeButton postId={numericPostId} />
+      <CommentSection postId={numericPostId} />
     </div>
   );
 };
