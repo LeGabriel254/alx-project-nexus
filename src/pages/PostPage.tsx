@@ -9,5 +9,5 @@ export const PostPage = () => {
     return <div>Invalid post ID.</div>;
   }
 
-  return <PostDetails />; // ✅ Remove postId prop
+  return <PostDetails />;
 };
