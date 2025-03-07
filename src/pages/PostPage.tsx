@@ -1,13 +1,13 @@
-import { useParams } from "react-router";
-import { PostDetails } from "./PostDetails";
+import { useParams } from "react-router-dom";
+import { PostDetails } from "../components/PostDetails";
 
+export const PostPage = () => {
+  const { postId } = useParams<{ postId: string }>(); 
+  const numericPostId = postId ? Number(postId) : NaN; 
 
+  if (isNaN(numericPostId)) {
+    return <div>Invalid post ID.</div>;
+  }
 
-export const Home = () => {
-  const { id } = useParams<{ id: string }>()
-  return (
-    <div className="pt-10">
-      <PostDetails postId={Number(id)} />
-    </div>
-  );
+  return <PostDetails postId={numericPostId} />;
 };

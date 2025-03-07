@@ -24,7 +24,7 @@ export const PostDetails = () => {
   const { data, error, isLoading } = useQuery<Post, Error>({
     queryKey: ["post", numericPostId],
     queryFn: () => fetchPostById(numericPostId),
-    enabled: !isNaN(numericPostId), 
+    enabled: !isNaN(numericPostId), // Only fetch if postId is a valid number
   });
 
   if (isLoading) {
