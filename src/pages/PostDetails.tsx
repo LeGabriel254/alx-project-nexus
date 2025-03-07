@@ -19,7 +19,7 @@ const fetchPostById = async (id: number): Promise<Post> => {
 
 export const PostDetails = () => {
   const { postId } = useParams<{ postId: string }>(); // Ensure postId is typed as a string
-  const numericPostId = postId ? Number(postId) : NaN; // Safely convert to number
+  const numericPostId = postId ? Number(postId) : NaN; 
 
   const { data, error, isLoading } = useQuery<Post, Error>({
     queryKey: ["post", numericPostId],
@@ -52,7 +52,7 @@ export const PostDetails = () => {
         <img
           src={data.image_url}
           alt={data.title}
-          className="mt-4 rounded object-contain w-full h-64"
+          className="mt-4 rounded object-contain h-64"
         />
       )}
       <p className="text-gray-400">{data.content}</p>
