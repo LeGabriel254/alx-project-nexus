@@ -18,8 +18,8 @@ const fetchPostById = async (id: number): Promise<Post> => {
 };
 
 export const PostDetails = () => {
-  const { postId } = useParams(); 
-  const numericPostId = Number(postId); 
+  const { postId } = useParams<{ postId: string }>(); // Ensure postId is typed as a string
+  const numericPostId = postId ? Number(postId) : NaN; // Safely convert to number
 
   const { data, error, isLoading } = useQuery<Post, Error>({
     queryKey: ["post", numericPostId],
@@ -35,25 +35,27 @@ export const PostDetails = () => {
     return <div>Error: {error.message}</div>;
   }
 
-  console.log("Post Data:", data);
+  if (!data) {
+    return <div>No post found.</div>;
+  }
 
-  const formattedDate = data?.created_at
-    ? new Date(String(data.created_at)).toLocaleDateString()
+  const formattedDate = data.created_at
+    ? new Date(data.created_at).toLocaleDateString()
     : "No date available";
 
   return (
     <div className="space-y-6">
       <h2 className="text-6xl font-bold mb-6 text-center bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
-        {data?.title}
+        {data.title}
       </h2>
-      {data?.image_url && (
+      {data.image_url && (
         <img
           src={data.image_url}
-          alt={data?.title}
-          className="mt-4 rounded object-contain w- h-64"
+          alt={data.title}
+          className="mt-4 rounded object-contain w-full h-64"
         />
       )}
-      <p className="text-gray-400">{data?.content}</p>
+      <p className="text-gray-400">{data.content}</p>
       <p className="text-gray-500 text-sm">Posted on: {formattedDate}</p>
 
       <LikeButton postId={numericPostId} />
