@@ -1,23 +1,27 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router";
 import { useAuth } from "../context/AuthContext";
 
 export const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const { signInWithGitHub, signOut, user } = useAuth();
-  const displayName = user?.user_metadata?.user_name || user?.email;
-  const menuRef = useRef(null);
 
-  // Close menu when clicking outside
+  const displayName = user?.user_metadata.user_name || user?.email;
+
+  // menu close when user clicking outside
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (menuRef.current && !menuRef.current.contains(event.target)) {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (!(event.target as HTMLElement).closest("#mobile-menu") && !(event.target as HTMLElement).closest("#menu-button")) {
         setMenuOpen(false);
       }
     };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+
+    if (menuOpen) {
+      document.addEventListener("click", handleClickOutside);
+    }
+
+    return () => document.removeEventListener("click", handleClickOutside);
+  }, [menuOpen]);
 
   return (
     <nav className="fixed top-0 w-full z-40 bg-[rgba(10,10,10,0.8)] backdrop-blur-lg border-b border-white/10 shadow-lg">
@@ -29,26 +33,15 @@ export const Navbar = () => {
 
           {/* Desktop Links */}
           <div className="hidden md:flex items-center space-x-8">
-            <Link to="/"
-              className="text-gray-300 hover:text-white transition-colors"
-            >
-              Home
-            </Link>
-            <Link to="/create"
-              className="text-gray-300 hover:text-white transition-colors"
-            >
-              Create Post
-            </Link>
-            <Link to="/communities"
-              className="text-gray-300 hover:text-white transition-colors"
-            >
-              Communities
-            </Link>
-            <Link to="/community/create"
-              className="text-gray-300 hover:text-white transition-colors"
-            >
-              Create Community
-            </Link>
+            {["Home", "Create Post", "Communities", "Create Community"].map((item, index) => (
+              <Link
+                key={index}
+                to={`/${item.toLowerCase().replace(/\s+/g, "")}`}
+                className="text-gray-300 hover:text-white transition-colors"
+              >
+                {item}
+              </Link>
+            ))}
           </div>
 
           {/* Desktop Auth */}
@@ -56,24 +49,33 @@ export const Navbar = () => {
             {user ? (
               <div className="flex items-center space-x-4">
                 {user.user_metadata?.avatar_url && (
-                  <img src={user.user_metadata.avatar_url} alt="User Avatar" className="w-8 h-8 rounded-full object-cover" />
+                  <img
+                    src={user.user_metadata.avatar_url}
+                    alt="User Avatar"
+                    className="w-8 h-8 rounded-full object-cover"
+                  />
                 )}
                 <span className="text-gray-300">{displayName}</span>
-                <button onClick={signOut} className="bg-red-500 px-3 py-1 rounded">Sign Out</button>
+                <button onClick={signOut} className="bg-red-500 px-3 py-1 rounded cursor-pointer">
+                  Sign Out
+                </button>
               </div>
             ) : (
-              <button onClick={signInWithGitHub} className="bg-blue-500 px-3 py-1 rounded">Sign in with GitHub</button>
+              <button onClick={signInWithGitHub} className="bg-blue-500 px-3 py-1 rounded cursor-pointer">
+                Sign in with GitHub
+              </button>
             )}
           </div>
 
           {/* Mobile Menu Button */}
           <div className="md:hidden">
             <button
+              id="menu-button"
               onClick={() => setMenuOpen((prev) => !prev)}
               className="text-gray-300 focus:outline-none"
               aria-label="Toggle menu"
             >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 {menuOpen ? (
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 ) : (
@@ -87,12 +89,18 @@ export const Navbar = () => {
 
       {/* Mobile Menu */}
       {menuOpen && (
-        <div ref={menuRef} className="md:hidden bg-[rgba(10,10,10,0.9)]">
+        <div id="mobile-menu" className="md:hidden bg-[rgba(10,10,10,0.9)]">
           <div className="px-2 pt-2 pb-3 space-y-1">
-            <Link to="/" className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700" onClick={() => setMenuOpen(false)}>Home</Link>
-            <Link to="/create" className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700" onClick={() => setMenuOpen(false)}>Create Post</Link>
-            <Link to="/communities" className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700" onClick={() => setMenuOpen(false)}>Communities</Link>
-            <Link to="/community/create" className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700" onClick={() => setMenuOpen(false)}>Create Community</Link>
+            {["Home", "Create Post", "Communities", "Create Community"].map((item, index) => (
+              <Link
+                key={index}
+                to={`/${item.toLowerCase().replace(/\s+/g, "")}`}
+                className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:text-white hover:bg-gray-700"
+                onClick={() => setMenuOpen(false)} // Close menu when clicking a link
+              >
+                {item}
+              </Link>
+            ))}
           </div>
 
           {/* Mobile Auth */}
@@ -103,10 +111,26 @@ export const Navbar = () => {
                   <img src={user.user_metadata.avatar_url} alt="User Avatar" className="w-6 h-6 rounded-full" />
                 )}
                 <span className="text-gray-300">{displayName}</span>
-                <button onClick={signOut} className="bg-red-500 px-2 py-1 text-sm rounded">Sign Out</button>
+                <button
+                  onClick={() => {
+                    signOut();
+                    setMenuOpen(false);
+                  }}
+                  className="bg-red-500 px-2 py-1 text-sm rounded cursor-pointer"
+                >
+                  Sign Out
+                </button>
               </div>
             ) : (
-              <button onClick={signInWithGitHub} className="bg-blue-500 px-2 py-1 text-sm rounded w-full text-center">Sign in with GitHub</button>
+              <button
+                onClick={() => {
+                  signInWithGitHub();
+                  setMenuOpen(false);
+                }}
+                className="bg-blue-500 px-2 py-1 text-sm rounded w-full text-center cursor-pointer"
+              >
+                Sign in with GitHub
+              </button>
             )}
           </div>
         </div>
