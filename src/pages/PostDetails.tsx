@@ -37,9 +37,9 @@ export const PostDetails = ({ postId }: Props) => {
   console.log("Post Data:", data);
 
   // Ensure created_at is a valid date
-  const formattedDate = data?.created_at 
-  ? new Date(String(data.created_at)).toLocaleDateString() 
-  : "No date available";
+  const formattedDate = data?.created_at
+    ? new Date(String(data.created_at)).toLocaleDateString()
+    : "No date available";
 
   return (
     <div className="space-y-6">
