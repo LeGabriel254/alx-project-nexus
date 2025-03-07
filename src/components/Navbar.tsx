@@ -33,16 +33,32 @@ export const Navbar = () => {
 
           {/* Desktop Links */}
           <div className="hidden md:flex items-center space-x-8">
-            {["Home", "Create Post", "Communities", "Create Community"].map((item, index) => (
-              <Link
-                key={index}
-                to={`/${item.toLowerCase().replace(/\s+/g, "")}`}
-                className="text-gray-300 hover:text-white transition-colors"
-              >
-                {item}
-              </Link>
-            ))}
+            <Link
+              to="/"
+              className="text-gray-300 hover:text-white transition-colors"
+            >
+              Home
+            </Link>
+            <Link
+              to="/create"
+              className="text-gray-300 hover:text-white transition-colors"
+            >
+              Create Post
+            </Link>
+            <Link
+              to="/communities"
+              className="text-gray-300 hover:text-white transition-colors"
+            >
+              Communities
+            </Link>
+            <Link
+              to="/community/create"
+              className="text-gray-300 hover:text-white transition-colors"
+            >
+              Create Community
+            </Link>
           </div>
+
 
           {/* Desktop Auth */}
           <div className="hidden md:flex items-center">
