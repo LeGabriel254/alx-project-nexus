@@ -1,31 +1,116 @@
-# 🏛️ Social Media App  
+# Build a Modern Social Media Website
 
 A modern social media platform that allows users to create posts, form communities, and engage with content through likes and comments. Authentication is required for users to interact with posts.
 
-## 🚀 Features  
-- 🔑 **User Authentication** – Secure authentication powered by Supabase.  
-- 📝 **Create & Manage Posts** – Users can publish and manage their own posts.  
-- 🏘️ **Communities** – Users can create and join communities.  
-- ❤️ **Likes & Comments** – Authenticated users can like and comment on posts.  
-- 📜 **Real-time Updates** – New posts and interactions are updated dynamically.  
+
+## ⚙️ Tech Stack
+
+- **React** for building the user interface
+- **Vite** for fast development and build processes
+- **TypeScript** for type safety and modern JavaScript features
+- **Supabase** for backend services including authentication, real-time data, and storage
+- **Tailwind CSS** for rapid and responsive styling
+
+## ⚡️ Features
+
+- **User Authentication via GitHub:**  
+  Securely sign in with GitHub and display user avatars and usernames across the site.
+
+- **Post Creation with Image Uploads:**  
+  Create posts with rich content and optional image uploads, complete with the creator’s profile picture.
+
+- **Dynamic Voting System:**  
+  Thumbs up and thumbs down buttons with subtle white glow effects to indicate your vote.
+
+- **Robust Commenting System:**  
+  Engage in threaded discussions with nested replies, each showing the commenter’s username and timestamp.
+
+- **Community & Category Support:**  
+  Build a Reddit-like experience where posts are organized by communities, with posts displayed in a responsive grid.
+
+- **Modern Glassmorphism & Glow Effects:**  
+  Enjoy a visually striking interface featuring glassy, transparent cards with glowing gradient borders on hover.
+
+- **Real-Time Data Updates:**  
+  All interactions (posting, voting, commenting) update in real time using Supabase and React Query.
 
 ---
+### Cloning the Repository
 
-## 🛠️ Tech Stack  
+Run the following commands in your terminal:
 
-| Technology  | Purpose  |
-|-------------|---------|
-| **Vite**  | Fast development & build tool  |
-| **TypeScript**  | Strongly typed JavaScript for better maintainability  |
-| **Tailwind CSS**  | Utility-first CSS framework for styling  |
-| **Supabase**  | Backend as a Service (BaaS) with authentication & database  |
-| **PostgreSQL**  | Scalable, open-source relational database  |
+```bash
+git clone https://github.com/LeGabriel254/alx-project-nexus.git
+cd alx-project-nexus
+```
 
----
+### Installation
 
-## ⚙️ Installation & Setup  
+Install the dependencies:
 
-### 1️⃣ Clone the Repository  
-```sh
-git clone <https://github.com/LeGabriel254/alx-project-nexus.git>
-cd <alx-project-nexus>
+```bash
+npm install
+```
+
+### Environment Variables
+
+Create a file named `.env` in the project root and add your Supabase credentials and other configuration values:
+
+```env
+VITE_SUPABASE_URL=https://your-supabase-url.supabase.co
+VITE_SUPABASE_ANON_KEY=your-anon-key
+```
+
+### Running the Project
+
+Start the development server:
+
+```bash
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+## 🕸️ Code Snippets
+
+Below are some key code snippets from the project.
+
+### RPC Function with Avatar URL
+
+```sql
+CREATE OR REPLACE FUNCTION get_posts_with_counts()
+RETURNS TABLE (
+  id integer,
+  title text,
+  content text,
+  created_at timestamptz,
+  image_url text,
+  like_count integer,
+  comment_count integer,
+  user_avatar_url text
+)
+LANGUAGE sql
+AS $$
+  SELECT 
+    p.id,
+    p.title,
+    p.content,
+    p.created_at,
+    p.image_url,
+    (SELECT COUNT(*) FROM votes v WHERE v.post_id = p.id) AS like_count,
+    (SELECT COUNT(*) FROM comments c WHERE c.post_id = p.id) AS comment_count,
+    p.user_avatar_url
+  FROM posts p
+  ORDER BY p.created_at DESC;
+$$;
+```
+
+### Vote Deletion RLS Policy
+
+```sql
+ALTER TABLE votes ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Delete own vote" ON votes
+FOR DELETE
+USING (auth.uid()::text = user_id);
+```
